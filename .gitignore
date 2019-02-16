@@ -1,0 +1,9 @@
+# Python
+__pycache__
+
+# VSCode
+.vscode
+
+#
+src/data/*
+src/data/!.gitkeep
