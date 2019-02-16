@@ -37,7 +37,8 @@ def generate_config():
         'token': '',
         'sleep_time': 30,
         'emote_chance': 10,
-        'combo_chance': 75
+        'combo_chance': 75,
+        'typing_time': 1.5
     }
 
     with open(DATA_DIR + 'config.ini', 'w') as configfile:
