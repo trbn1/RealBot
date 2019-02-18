@@ -38,7 +38,8 @@ def generate_config():
         'sleep_time': 30,
         'emote_chance': 10,
         'combo_chance': 75,
-        'typing_time': 1.5
+        'typing_time': 1.5,
+        'max_concurrent_messages': 4
     }
 
     with open(DATA_DIR + 'config.ini', 'w') as configfile:

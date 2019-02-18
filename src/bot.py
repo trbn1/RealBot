@@ -24,11 +24,15 @@ class MyClient(discord.Client):
         self.emote_chance = int(config.get('Settings', 'emote_chance'))
         self.combo_chance = int(config.get('Settings', 'combo_chance'))
         self.typing_time = float(config.get('Settings', 'typing_time'))
+        self.max_concurrent_messages = int(config.get('Settings', 'max_concurrent_messages'))
+
+        self.concurrent_messages = 0
 
         self.bg_task = self.loop.create_task(self.background_task())
 
 
     async def send_message(self, channel, message_type):
+        self.concurrent_messages += 1
         with channel.typing():
             await asyncio.sleep(self.typing_time)
 
@@ -44,6 +48,11 @@ class MyClient(discord.Client):
         channel = self.get_channel(random.choice(self.channels))
 
         while not self.is_closed():
+            if self.concurrent_messages > self.max_concurrent_messages and self.max_concurrent_messages is not 0:
+                self.concurrent_messages = 0
+                await self.wait_for('message')
+                await asyncio.sleep(random.randint(0, self.sleep_time))
+
             await self.send_message(channel, 'text')
 
             if random.randint(0, 100) < self.emote_chance:
@@ -60,7 +69,7 @@ class MyClient(discord.Client):
 
     async def on_message(self, message):
         if message.author.id == self.user.id:
-            return
+            return            
 
         if message.content.startswith('<@' + str(self.user.id) + '>'):
             channel = message.channel
