@@ -28,24 +28,29 @@ class MyClient(discord.Client):
         self.bg_task = self.loop.create_task(self.background_task())
 
 
+    async def send_message(self, channel, message_type):
+        with channel.typing():
+            await asyncio.sleep(self.typing_time)
+
+            if message_type is 'text':
+                await channel.send(random.choice(self.messages))
+            
+            if message_type is 'emote':
+                await channel.send(random.choice(self.emotes))
+
+
     async def background_task(self):
         await self.wait_until_ready()
         channel = self.get_channel(random.choice(self.channels))
 
         while not self.is_closed():
-            with channel.typing():
-                await asyncio.sleep(self.typing_time)
-                await channel.send(random.choice(self.messages))
+            await self.send_message(channel, 'text')
 
             if random.randint(0, 100) < self.emote_chance:
-                with channel.typing():
-                    await asyncio.sleep(self.typing_time)
-                    await channel.send(random.choice(self.emotes))
+                await self.send_message(channel, 'emote')
 
             if random.randint(0, 100) < self.combo_chance:
-                with channel.typing():
-                    await asyncio.sleep(self.typing_time)
-                    await channel.send(random.choice(self.messages))
+                await self.send_message(channel, 'text')
                 await asyncio.sleep(random.randint(0, self.sleep_time))
 
             else:
@@ -58,14 +63,11 @@ class MyClient(discord.Client):
             return
 
         if message.content.startswith('<@' + str(self.user.id) + '>'):
-            with message.channel.typing():
-                await asyncio.sleep(self.typing_time)
-                await message.channel.send(random.choice(self.messages).format(message))
+            channel = message.channel
+            await self.send_message(channel, 'text')
 
             if random.randint(0, 100) < self.emote_chance:
-                with message.channel.typing():
-                    await asyncio.sleep(self.typing_time)
-                    await message.channel.send(random.choice(self.emotes).format(message))
+                await self.send_message(channel, 'emote')
 
 
 cfg.generate_config()
