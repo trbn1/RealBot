@@ -26,13 +26,14 @@ class MyClient(discord.Client):
         self.typing_time = float(config.get('Settings', 'typing_time'))
         self.max_concurrent_messages = int(config.get('Settings', 'max_concurrent_messages'))
 
-        self.concurrent_messages = 0
+        self.concurrent_messages = {}
 
-        self.bg_task = self.loop.create_task(self.background_task())
+        for channel_id in self.channels:
+            self.bg_task = self.loop.create_task(self.background_task(channel_id))
 
 
     async def send_message(self, channel, message_type):
-        self.concurrent_messages += 1
+        self.concurrent_messages[int(channel.id)] += 1
         with channel.typing():
             await asyncio.sleep(self.typing_time)
 
@@ -43,14 +44,18 @@ class MyClient(discord.Client):
                 await channel.send(random.choice(self.emotes))
 
 
-    async def background_task(self):
+    async def background_task(self, channel_id):
         await self.wait_until_ready()
-        channel = self.get_channel(random.choice(self.channels))
+        channel = self.get_channel(channel_id)
+        self.concurrent_messages[int(channel.id)] = 0
 
         while not self.is_closed():
-            if self.concurrent_messages > self.max_concurrent_messages and self.max_concurrent_messages is not 0:
-                self.concurrent_messages = 0
-                await self.wait_for('message')
+            if self.concurrent_messages[int(channel.id)] > self.max_concurrent_messages and self.max_concurrent_messages is not 0:
+                self.concurrent_messages[int(channel.id)] = 0
+                while True:
+                    msg = await self.wait_for('message')
+                    if int(msg.channel.id) is int(channel.id):
+                        break
                 await asyncio.sleep(random.randint(0, self.sleep_time))
 
             await self.send_message(channel, 'text')
@@ -63,7 +68,6 @@ class MyClient(discord.Client):
                 await asyncio.sleep(random.randint(0, self.sleep_time))
 
             else:
-                channel = self.get_channel(random.choice(self.channels))
                 await asyncio.sleep(random.randint(0, self.sleep_time))
 
 
