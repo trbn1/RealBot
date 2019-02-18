@@ -77,7 +77,7 @@ class MyClient(discord.Client):
         if message.author.id == self.user.id:
             return            
 
-        if message.content.startswith('<@' + str(self.user.id) + '>'):
+        if '<@' + str(self.user.id) + '>' in message.content:
             channel = message.channel
             await self.send_message(channel, 'text', mode='reply')
 
