@@ -32,8 +32,10 @@ class MyClient(discord.Client):
             self.bg_task = self.loop.create_task(self.background_task(channel_id))
 
 
-    async def send_message(self, channel, message_type):
-        self.concurrent_messages[int(channel.id)] += 1
+    async def send_message(self, channel, message_type, mode='spam'):
+        if mode is 'spam':
+            self.concurrent_messages[int(channel.id)] += 1
+
         with channel.typing():
             await asyncio.sleep(self.typing_time)
 
@@ -77,10 +79,10 @@ class MyClient(discord.Client):
 
         if message.content.startswith('<@' + str(self.user.id) + '>'):
             channel = message.channel
-            await self.send_message(channel, 'text')
+            await self.send_message(channel, 'text', mode='reply')
 
             if random.randint(0, 100) < self.emote_chance:
-                await self.send_message(channel, 'emote')
+                await self.send_message(channel, 'emote', mode='reply')
 
 
 cfg.generate_config()
