@@ -22,7 +22,7 @@ def postprocess_messages():
             if re.match(r'(^\,\s)', item):
                 item = re.sub(r'(^\,\s)', ',', item)
             if '$ ' in item:
-                item = re.sub(r'(\$\s)+', '$', item)
+                item = re.sub(r'(^\$\s)+', '$', item)
             if '! ' in item:
                 item = re.sub(r'(\!\s)+', '!', item)
             if ': ' in item:
@@ -47,6 +47,12 @@ def postprocess_messages():
                 item = re.sub(r'(\@\s)+', '@', item)
             if '_ ' in item:
                 item = re.sub(r'(\_\s)+', '_', item)
+            if '( ' in item:
+                item = re.sub(r'(\(\s)+', '(', item)
+            if '~ ' in item:
+                item = re.sub(r'(\~\s)+', '~', item)
+            if '= ' in item:
+                item = re.sub(r'(\=\s)+', '=', item)
             if ' \' ' in item:
                 item = re.sub(r'(\s\'\s)+', '\'', item)
             if ' \" ' in item:
@@ -55,13 +61,37 @@ def postprocess_messages():
                 item = re.sub(r'(\'\s)+', '\'', item) 
             if '\" ' in item:
                 item = re.sub(r'(\"\s)+', '\"', item) 
+            if '/ ' in item:
+                item = re.sub(r'(\/\s)+', '/', item)
+            if ' /' in item:
+                item = re.sub(r'(\s\/)+', '/', item) 
             if ' ?' in item:
                 item = re.sub(r'(\s\?)+', '?', item)
             if ' ,' in item:
                 item = re.sub(r'(\s\,)+', ',', item)
             if ' .' in item:
                 item = re.sub(r'(\s\.)+', '.', item)
-            if item is not '':
+            if ' )' in item:
+                item = re.sub(r'(\s\))+', ')', item)
+            if ' \'' in item:
+                item = re.sub(r'(\s\')+', '\'', item) 
+            if ' -' in item:
+                item = re.sub(r'(\s\-)+', '-', item)
+            if ' :' in item:
+                item = re.sub(r'(\s\:)+', ':', item)
+            if ' ;' in item:
+                item = re.sub(r'(\s\;)+', ';', item)
+            if ' ]' in item:
+                item = re.sub(r'(\s\])+', ']', item)
+            if ' $' in item:
+                item = re.sub(r'(\s\$)+', '$', item)
+            if ' %' in item:
+                item = re.sub(r'(\s\%)+', '%', item)
+            if ' =' in item:
+                item = re.sub(r'(\s\=)+', '=', item)
+            if ' _' in item:
+                item = re.sub(r'(\s\_)+', '', item)
+            if item is not '' and len(item) < 100:
                 f.write('%s' % item)
 
 
