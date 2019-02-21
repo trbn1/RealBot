@@ -49,15 +49,23 @@ class MyClient(discord.Client):
     async def background_task(self, channel_id):
         await self.wait_until_ready()
         channel = self.get_channel(channel_id)
-        self.concurrent_messages[int(channel.id)] = 0
+        self.concurrent_messages[int(channel.id)] = self.max_concurrent_messages + 1
 
         while not self.is_closed():
             if self.concurrent_messages[int(channel.id)] > self.max_concurrent_messages and self.max_concurrent_messages is not 0:
                 self.concurrent_messages[int(channel.id)] = 0
+                start_spam_at_messages = random.randint(2, 10) # amount of message to wait for before starting spamming
+                messages_counter = 0
+
                 while True:
                     msg = await self.wait_for('message')
+
                     if int(msg.channel.id) is int(channel.id):
+                        messages_counter += 1
+
+                    if int(msg.channel.id) is int(channel.id) and messages_counter is start_spam_at_messages:
                         break
+                        
                 await asyncio.sleep(random.randint(0, self.sleep_time))
 
             await self.send_message(channel, 'text')
