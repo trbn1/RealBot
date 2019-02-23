@@ -30,7 +30,7 @@ def generate_config():
 
     config['ID'] = {
         'channel': '',
-        'emotes': '<:pepega:545748645270519829>,<:pepga:545748657904025620>',
+        'emotes': '<:pepega:545748645270519829>,<:pepga:545748657904025620>'
     }
 
     config['Settings'] = {
@@ -39,7 +39,8 @@ def generate_config():
         'emote_chance': 10,
         'combo_chance': 75,
         'typing_time': 1.5,
-        'max_concurrent_messages': 4
+        'max_concurrent_messages': 4,
+        'quit_phrases': ''
     }
 
     with open(DATA_DIR + 'config.ini', 'w') as configfile:

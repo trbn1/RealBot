@@ -25,14 +25,19 @@ class MyClient(discord.Client):
         self.combo_chance = int(config.get('Settings', 'combo_chance'))
         self.typing_time = float(config.get('Settings', 'typing_time'))
         self.max_concurrent_messages = int(config.get('Settings', 'max_concurrent_messages'))
+        self.quit_phrases = config.get('Settings', 'quit_phrases').split(',')
 
         self.concurrent_messages = {}
+        self.status = 0
 
         for channel_id in self.channels:
             self.bg_task = self.loop.create_task(self.background_task(channel_id))
 
 
     async def send_message(self, channel, message_type, mode='spam'):
+        if self.status is 1:
+            return
+
         if mode is 'spam':
             self.concurrent_messages[int(channel.id)] += 1
 
@@ -40,14 +45,26 @@ class MyClient(discord.Client):
             await asyncio.sleep(self.typing_time)
 
             if message_type is 'text':
-                await channel.send(random.choice(self.messages))
+                msg = random.choice(self.messages)
+                await channel.send(msg)
             
             if message_type is 'emote':
                 await channel.send(random.choice(self.emotes))
 
+        for sentence in self.quit_phrases:
+            if sentence in msg and self.quit_phrases is not '':
+                await asyncio.sleep(1)
+                self.status = 1
+                await self.change_presence(status='invisible')
+                await asyncio.sleep(random.randint(300, 3600))
+                self.status = 0
+                await self.change_presence(status='dnd')
+                await asyncio.sleep(5)
+
 
     async def background_task(self, channel_id):
         await self.wait_until_ready()
+        await self.change_presence(status='dnd')
         channel = self.get_channel(channel_id)
         self.concurrent_messages[int(channel.id)] = self.max_concurrent_messages + 1
 
@@ -82,8 +99,8 @@ class MyClient(discord.Client):
 
 
     async def on_message(self, message):
-        if message.author.id == self.user.id:
-            return            
+        if message.author.id is self.user.id:
+            return
 
         if '<@' + str(self.user.id) + '>' in message.content:
             channel = message.channel
