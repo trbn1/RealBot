@@ -62,7 +62,7 @@ class MyClient(discord.Client):
                 await channel.send(random.choice(self.emotes))
 
         for sentence in self.quit_phrases:
-            if sentence in msg and self.quit_phrases is not '':
+            if sentence in msg and self.quit_phrases is not '' and message_type is 'text':
                 await asyncio.sleep(1)
                 self.status = 1
                 await self.change_presence(status='invisible')
