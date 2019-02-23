@@ -43,12 +43,22 @@ def generate_config():
         'quit_phrases': ''
     }
 
-    with open(DATA_DIR + 'config.ini', 'w') as configfile:
-        config.write(configfile)
+    try:
+        with open(DATA_DIR + 'config.ini', 'w') as configfile:
+            config.write(configfile)
+    except:
+        print('Error: Failed to write configuration file.')
+        sys.exit(1)
 
 
 def load_config():
     config = configparser.ConfigParser()
     config_file = DATA_DIR + 'config.ini'
-    config.read(config_file)
+
+    try:
+        config.read(config_file)
+    except:
+        print('Error: Failed to open configuration file.')
+        sys.exit(1)
+
     return config

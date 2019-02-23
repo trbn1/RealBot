@@ -4,6 +4,7 @@ import asyncio
 import config as cfg
 import discord
 import random
+import sys
 
 
 class MyClient(discord.Client):
@@ -14,17 +15,26 @@ class MyClient(discord.Client):
             with open(config.get('FilePaths', 'messages'), 'r', encoding='utf8') as f:
                 self.messages = f.readlines()
         except:
-            print('Error reading %s.' % config.get('FilePaths', 'messages'))
-            exit(0)
+            print('Error: Failed to open %s.' % config.get('FilePaths', 'messages'))
+            sys.exit(1)
 
-        self.channels = [int(val) for val in config.get('ID', 'channel').split(',')]
+        try:
+            self.channels = [int(val) for val in config.get('ID', 'channel').split(',')]
+        except:
+            print('Error: Invalid channel ID passed.')
+            sys.exit(1)
+        
+        try:
+            self.sleep_time = int(config.get('Settings', 'sleep_time'))
+            self.emote_chance = int(config.get('Settings', 'emote_chance'))
+            self.combo_chance = int(config.get('Settings', 'combo_chance'))
+            self.typing_time = float(config.get('Settings', 'typing_time'))
+            self.max_concurrent_messages = int(config.get('Settings', 'max_concurrent_messages'))
+        except ValueError as e:
+            print('Error: Invalid values in [Settings] section of configuration file. %s' % e)
+            sys.exit(1)
+
         self.emotes = config.get('ID', 'emotes').split(',')
-
-        self.sleep_time = int(config.get('Settings', 'sleep_time'))
-        self.emote_chance = int(config.get('Settings', 'emote_chance'))
-        self.combo_chance = int(config.get('Settings', 'combo_chance'))
-        self.typing_time = float(config.get('Settings', 'typing_time'))
-        self.max_concurrent_messages = int(config.get('Settings', 'max_concurrent_messages'))
         self.quit_phrases = config.get('Settings', 'quit_phrases').split(',')
 
         self.concurrent_messages = {}
@@ -48,7 +58,7 @@ class MyClient(discord.Client):
                 msg = random.choice(self.messages)
                 await channel.send(msg)
             
-            if message_type is 'emote':
+            if message_type is 'emote' and self.emotes is not '':
                 await channel.send(random.choice(self.emotes))
 
         for sentence in self.quit_phrases:
@@ -113,4 +123,9 @@ class MyClient(discord.Client):
 cfg.generate_config()
 config = cfg.load_config()
 client = MyClient()
-client.run(config.get('Settings', 'token'))
+
+try:
+    client.run(config.get('Settings', 'token'))
+except discord.errors.LoginFailure as e:
+    print('Error: %s' % e)
+    sys.exit(1)
