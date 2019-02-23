@@ -61,15 +61,16 @@ class MyClient(discord.Client):
             if message_type is 'emote' and self.emotes is not '':
                 await channel.send(random.choice(self.emotes))
 
-        for sentence in self.quit_phrases:
-            if sentence in msg and self.quit_phrases is not '' and message_type is 'text':
-                await asyncio.sleep(1)
-                self.status = 1
-                await self.change_presence(status='invisible')
-                await asyncio.sleep(random.randint(300, 3600))
-                self.status = 0
-                await self.change_presence(status='dnd')
-                await asyncio.sleep(5)
+        if self.quit_phrases is not '' and message_type is 'text':
+            for sentence in self.quit_phrases:
+                if sentence in msg:
+                    await asyncio.sleep(1)
+                    self.status = 1
+                    await self.change_presence(status='invisible')
+                    await asyncio.sleep(random.randint(300, 3600))
+                    self.status = 0
+                    await self.change_presence(status='dnd')
+                    await asyncio.sleep(5)
 
 
     async def background_task(self, channel_id):
