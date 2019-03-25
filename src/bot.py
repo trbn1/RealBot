@@ -35,17 +35,28 @@ class MyClient(discord.Client):
             sys.exit(1)
 
         self.emotes = config.get('ID', 'emotes').split(',')
+        if '' in self.emotes:
+            self.send_emotes = False
+
+        else: 
+            self.send_emotes = True
+
         self.quit_phrases = config.get('Settings', 'quit_phrases').split(',')
+        if '' in self.quit_phrases:
+            self.quit = False
+
+        else: 
+            self.quit = True
 
         self.concurrent_messages = {}
-        self.status = 0
+        self.invisible = False
 
         for channel_id in self.channels:
             self.bg_task = self.loop.create_task(self.background_task(channel_id))
 
 
     async def send_message(self, channel, message_type, mode='spam'):
-        if self.status is 1:
+        if self.invisible:
             return
 
         if mode is 'spam':
@@ -61,20 +72,20 @@ class MyClient(discord.Client):
                 except:
                     print('Error while sending a message')
 
-            if message_type is 'emote' and self.emotes is not '':
+            if message_type is 'emote':
                 try:
                     await channel.send(random.choice(self.emotes))
                 except:
                     print('Error while sending a message')
 
-        if self.quit_phrases is not '' and message_type is 'text':
+        if self.quit and message_type is 'text':
             for sentence in self.quit_phrases:
                 if sentence in msg:
                     await asyncio.sleep(1)
-                    self.status = 1
+                    self.invisible = True
                     await self.change_presence(status='invisible')
                     await asyncio.sleep(random.randint(300, 3600))
-                    self.status = 0
+                    self.invisible = False
                     await self.change_presence(status='dnd')
                     await asyncio.sleep(5)
 
@@ -104,7 +115,7 @@ class MyClient(discord.Client):
 
             await self.send_message(channel, 'text')
 
-            if random.randint(0, 100) < self.emote_chance:
+            if random.randint(0, 100) < self.emote_chance and self.send_emotes:
                 await self.send_message(channel, 'emote')
 
             if random.randint(0, 100) < self.combo_chance:
@@ -123,7 +134,7 @@ class MyClient(discord.Client):
             channel = message.channel
             await self.send_message(channel, 'text', mode='reply')
 
-            if random.randint(0, 100) < self.emote_chance:
+            if random.randint(0, 100) < self.emote_chance and self.send_emotes:
                 await self.send_message(channel, 'emote', mode='reply')
 
 
