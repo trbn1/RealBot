@@ -34,6 +34,14 @@ class MyClient(discord.Client):
             print('Error: Invalid values in [Settings] section of configuration file. %s' % e)
             sys.exit(1)
 
+        try:
+            self.status = config.get('Settings', 'status')
+            if 'online' not in self.status and 'dnd' not in self.status:
+                raise Exception('Status must be \'online\' or \'dnd\'.')
+        except Exception as e:
+            print('Error: Invalid status passed. %s' % e)
+            sys.exit(1)
+
         self.emotes = config.get('ID', 'emotes').split(',')
         if '' in self.emotes:
             self.send_emotes = False
@@ -86,13 +94,13 @@ class MyClient(discord.Client):
                     await self.change_presence(status='invisible')
                     await asyncio.sleep(random.randint(300, 3600))
                     self.invisible = False
-                    await self.change_presence(status='dnd')
+                    await self.change_presence(status=self.status)
                     await asyncio.sleep(5)
 
 
     async def background_task(self, channel_id):
         await self.wait_until_ready()
-        await self.change_presence(status='dnd')
+        await self.change_presence(status=self.status)
         channel = self.get_channel(channel_id)
         self.concurrent_messages[int(channel.id)] = self.max_concurrent_messages + 1
 

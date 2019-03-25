@@ -40,6 +40,7 @@ def generate_config():
         'combo_chance': 75,
         'typing_time': 1.5,
         'max_concurrent_messages': 4,
+        'status': 'online',
         'quit_phrases': ''
     }
 
