@@ -99,6 +99,7 @@ class MyClient(discord.Client):
 
                     if int(msg.channel.id) is int(channel.id) and messages_counter is start_spam_at_messages:
                         break
+
                 await asyncio.sleep(random.randint(0, self.sleep_time))
 
             await self.send_message(channel, 'text')
@@ -115,7 +116,7 @@ class MyClient(discord.Client):
 
 
     async def on_message(self, message):
-        if message.author.id is self.user.id:
+        if message.author.id is self.user.id or message.channel.id not in self.channels:
             return
 
         if '<@' + str(self.user.id) + '>' in message.content:
