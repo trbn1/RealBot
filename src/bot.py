@@ -23,7 +23,7 @@ class MyClient(discord.Client):
         except:
             print('Error: Invalid channel ID passed.')
             sys.exit(1)
-        
+
         try:
             self.sleep_time = int(config.get('Settings', 'sleep_time'))
             self.emote_chance = int(config.get('Settings', 'emote_chance'))
@@ -56,10 +56,16 @@ class MyClient(discord.Client):
 
             if message_type is 'text':
                 msg = random.choice(self.messages)
-                await channel.send(msg)
-            
+                try:
+                    await channel.send(msg)
+                except:
+                    print('Error while sending a message')
+
             if message_type is 'emote' and self.emotes is not '':
-                await channel.send(random.choice(self.emotes))
+                try:
+                    await channel.send(random.choice(self.emotes))
+                except:
+                    print('Error while sending a message')
 
         if self.quit_phrases is not '' and message_type is 'text':
             for sentence in self.quit_phrases:
@@ -93,7 +99,6 @@ class MyClient(discord.Client):
 
                     if int(msg.channel.id) is int(channel.id) and messages_counter is start_spam_at_messages:
                         break
-                        
                 await asyncio.sleep(random.randint(0, self.sleep_time))
 
             await self.send_message(channel, 'text')
