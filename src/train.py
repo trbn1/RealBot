@@ -20,9 +20,9 @@ def train_network():
                             word_level=True,
                             batch_size=256)
 
-    shutil.move('textgenrnn_config.json', config.get('Model', 'weights'))
+    shutil.move('textgenrnn_weights.hdf5', config.get('Model', 'weights'))
     shutil.move('textgenrnn_vocab.json', config.get('Model', 'vocab'))
-    shutil.move('textgenrnn_weights.hdf5', config.get('Model', 'config'))
+    shutil.move('textgenrnn_config.json', config.get('Model', 'config'))
 
 
 if __name__ == '__main__':
