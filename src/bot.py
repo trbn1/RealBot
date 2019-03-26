@@ -146,7 +146,7 @@ class MyClient(discord.Client):
                 await self.send_message(channel, 'emote', mode='reply')
 
 
-cfg.generate_config()
+cfg.generate_bot_config()
 config = cfg.load_config()
 client = MyClient()
 

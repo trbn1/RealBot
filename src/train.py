@@ -7,7 +7,7 @@ from textgenrnn import textgenrnn
 
 
 def train_network():
-    cfg.generate_config()
+    cfg.generate_training_config()
     config = cfg.load_config()
 
     textgen = textgenrnn()

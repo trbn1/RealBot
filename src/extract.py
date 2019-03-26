@@ -6,7 +6,7 @@ import re
 
 
 def extract_messages():
-    cfg.generate_config()
+    cfg.generate_training_config()
     config = cfg.load_config()
 
     with open(config.get('FilePaths', 'source_data'), 'r', encoding='utf8') as jdata:

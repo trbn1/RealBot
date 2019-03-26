@@ -6,7 +6,7 @@ import sys
 
 
 def postprocess_messages():
-    cfg.generate_config()
+    cfg.generate_training_config()
     config = cfg.load_config()
 
     try:

@@ -4,20 +4,19 @@ import configparser
 import sys
 
 
-DATA_DIR = 'src/data/'
+DATA_DIR = 'data/'
 
 
-def generate_config():
+def generate_training_config():
     config = configparser.ConfigParser()
 
-    config['FilePaths'] = { 
+    config['FilePaths'] = {
         'source_data': DATA_DIR + 'src.json',
         'source_messages': DATA_DIR + 'srcmsg.txt',
         'generated_messages': DATA_DIR + 'genmsg.txt',
-        'messages': DATA_DIR + 'msg.txt'
     }
 
-    config['Extract'] = { 
+    config['Extract'] = {
         'user': 39
     }
 
@@ -26,6 +25,21 @@ def generate_config():
         'vocab': DATA_DIR + 'textgenrnn_vocab.json',
         'config': DATA_DIR + 'textgenrnn_config.json',
         'generated_lines': 1000000
+    }
+
+    try:
+        with open(DATA_DIR + 'config.ini', 'w') as configfile:
+            config.write(configfile)
+    except:
+        print('Error: Failed to write configuration file.')
+        sys.exit(1)
+
+
+def generate_bot_config():
+    config = configparser.ConfigParser()
+
+    config['FilePaths'] = {
+        'messages': DATA_DIR + 'msg.txt'
     }
 
     config['ID'] = {

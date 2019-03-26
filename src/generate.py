@@ -6,9 +6,8 @@ from textgenrnn import textgenrnn
 
 
 def generate_messages():
-    cfg.generate_config()
+    cfg.generate_training_config()
     config = cfg.load_config()
-
 
     textgen = textgenrnn(config.get('Model', 'weights'),
                         config.get('Model', 'vocab'),
