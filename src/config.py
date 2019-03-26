@@ -38,7 +38,7 @@ def generate_training_config():
 def generate_bot_config():
     config = configparser.ConfigParser()
 
-    bot_1 = 'test'
+    bot_1 = ''
     config[bot_1] = {
         'name': bot_1,
         'messages': DATA_DIR + bot_1 + '_msg.txt',
@@ -51,10 +51,11 @@ def generate_bot_config():
         'typing_time': 1.5,
         'max_concurrent_messages': 4,
         'status': 'dnd',
+        'sleep': 'no',
         'quit_phrases': ''
     }
 
-    bot_2 = 'test2'
+    bot_2 = ''
     config[bot_2] = {
         'name': bot_2,
         'messages': DATA_DIR + bot_2 + '_msg.txt',
@@ -67,6 +68,7 @@ def generate_bot_config():
         'typing_time': 1.5,
         'max_concurrent_messages': 4,
         'status': 'online',
+        'sleep': 'no',
         'quit_phrases': ''
     }
 

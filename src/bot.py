@@ -46,6 +46,20 @@ class MyClient(discord.Client):
             print('Error: Invalid status passed. %s' % e)
             sys.exit(1)
 
+        try:
+            self.sleep_mode = config.get(self.name, 'sleep')
+            if 'yes' not in self.sleep_mode and 'no' not in self.sleep_mode:
+                raise Exception('Sleep mode must be \'yes\' or \'no\'.')
+
+            if 'yes' in self.sleep_mode:
+                self.sleep_mode = True
+
+            else:
+                self.sleep_mode = False
+        except Exception as e:
+            print('Error: Invalid sleep mode passed. %s' % e)
+            sys.exit(1)
+
         self.emotes = config.get(self.name, 'emotes').split(',')
         if '' in self.emotes:
             self.send_emotes = False
@@ -109,7 +123,7 @@ class MyClient(discord.Client):
         self.concurrent_messages[int(channel.id)] = self.max_concurrent_messages + 1
 
         while not self.is_closed():
-            if self.concurrent_messages[int(channel.id)] > self.max_concurrent_messages and self.max_concurrent_messages is not 0:
+            if self.concurrent_messages[int(channel.id)] > self.max_concurrent_messages and self.max_concurrent_messages is not 0 and self.sleep_mode:
                 self.concurrent_messages[int(channel.id)] = 0
                 start_spam_at_messages = random.randint(2, 10) # amount of message to wait for before starting spamming
                 messages_counter = 0
