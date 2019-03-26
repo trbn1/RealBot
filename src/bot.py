@@ -85,7 +85,7 @@ class MyClient(discord.Client):
         if self.invisible:
             return
 
-        if mode is 'spam':
+        if mode is 'spam' and self.sleep_mode:
             self.concurrent_messages[int(channel.id)] += 1
 
         with channel.typing():
