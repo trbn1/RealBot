@@ -4,7 +4,7 @@ import configparser
 import sys
 
 
-DATA_DIR = 'data/'
+DATA_DIR = 'src/data/'
 
 
 def generate_training_config():
@@ -38,16 +38,28 @@ def generate_training_config():
 def generate_bot_config():
     config = configparser.ConfigParser()
 
-    config['FilePaths'] = {
-        'messages': DATA_DIR + 'msg.txt'
-    }
-
-    config['ID'] = {
+    bot_1 = 'test'
+    config[bot_1] = {
+        'name': bot_1,
+        'messages': DATA_DIR + bot_1 + '_msg.txt',
         'channel': '',
-        'emotes': '<:pepega:545748645270519829>,<:pepga:545748657904025620>'
+        'emotes': '<:pepega:545748645270519829>,<:pepga:545748657904025620>',
+        'token': '',
+        'sleep_time': 30,
+        'emote_chance': 10,
+        'combo_chance': 75,
+        'typing_time': 1.5,
+        'max_concurrent_messages': 4,
+        'status': 'dnd',
+        'quit_phrases': ''
     }
 
-    config['Settings'] = {
+    bot_2 = 'test2'
+    config[bot_2] = {
+        'name': bot_2,
+        'messages': DATA_DIR + bot_2 + '_msg.txt',
+        'channel': '',
+        'emotes': '',
         'token': '',
         'sleep_time': 30,
         'emote_chance': 10,
