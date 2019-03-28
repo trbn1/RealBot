@@ -32,6 +32,7 @@ class MyClient(discord.Client):
             self.sleep_time = int(config.get(self.name, 'sleep_time'))
             self.emote_chance = int(config.get(self.name, 'emote_chance'))
             self.combo_chance = int(config.get(self.name, 'combo_chance'))
+            self.highlight_chance = int(config.get(self.name, 'highlight_chance'))
             self.typing_time = float(config.get(self.name, 'typing_time'))
             self.max_concurrent_messages = int(config.get(self.name, 'max_concurrent_messages'))
         except ValueError as e:
@@ -76,6 +77,15 @@ class MyClient(discord.Client):
 
         self.concurrent_messages = {}
         self.invisible = False
+        self.highlight_ids = []
+
+        try:
+            self.names = []
+            for section in config.sections():
+                self.names.append(config.get(section, 'name'))
+        except Exception as e:
+            print('Error: invalid name passed. %s' % e)
+            sys.exit(1)
 
         for channel_id in self.channels:
             self.bg_task = self.loop.create_task(self.background_task(channel_id))
@@ -93,6 +103,8 @@ class MyClient(discord.Client):
 
             if message_type is 'text':
                 msg = random.choice(self.messages)
+                if random.randint(0, 100) < self.highlight_chance:
+                    msg = random.choice(self.highlight_ids) + ' ' + msg
                 try:
                     await channel.send(msg)
                 except:
@@ -122,6 +134,10 @@ class MyClient(discord.Client):
         channel = self.get_channel(channel_id)
         self.concurrent_messages[int(channel.id)] = self.max_concurrent_messages + 1
         first_loop = True
+
+        for member in self.get_all_members():
+            if member.name not in self.user.name and member.name in self.names:
+                self.highlight_ids.append(member.mention)
 
         while not self.is_closed():
             if self.concurrent_messages[int(channel.id)] > self.max_concurrent_messages and self.max_concurrent_messages is not 0 and self.sleep_mode and not first_loop:

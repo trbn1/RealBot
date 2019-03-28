@@ -14,6 +14,7 @@ def generate_training_config():
         'source_data': DATA_DIR + 'src.json',
         'source_messages': DATA_DIR + 'srcmsg.txt',
         'generated_messages': DATA_DIR + 'genmsg.txt',
+        'messages': DATA_DIR + 'msg.txt',
     }
 
     config['Extract'] = {
@@ -43,11 +44,12 @@ def generate_bot_config():
         'name': bot_1,
         'messages': DATA_DIR + bot_1 + '_msg.txt',
         'channel': '',
-        'emotes': '<:pepega:545748645270519829>,<:pepga:545748657904025620>',
+        'emotes': '',
         'token': '',
         'sleep_time': 30,
         'emote_chance': 10,
         'combo_chance': 75,
+        'highlight_chance': 5,
         'typing_time': 1.5,
         'max_concurrent_messages': 4,
         'status': 'dnd',
@@ -62,13 +64,14 @@ def generate_bot_config():
         'channel': '',
         'emotes': '',
         'token': '',
-        'sleep_time': 30,
+        'sleep_time': 60,
         'emote_chance': 10,
         'combo_chance': 75,
+        'highlight_chance': 5,
         'typing_time': 1.5,
         'max_concurrent_messages': 4,
         'status': 'online',
-        'sleep': 'no',
+        'sleep': 'yes',
         'quit_phrases': ''
     }
 
