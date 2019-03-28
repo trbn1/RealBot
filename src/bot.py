@@ -121,9 +121,10 @@ class MyClient(discord.Client):
         await self.change_presence(status=self.status)
         channel = self.get_channel(channel_id)
         self.concurrent_messages[int(channel.id)] = self.max_concurrent_messages + 1
+        first_loop = True
 
         while not self.is_closed():
-            if self.concurrent_messages[int(channel.id)] > self.max_concurrent_messages and self.max_concurrent_messages is not 0 and self.sleep_mode:
+            if self.concurrent_messages[int(channel.id)] > self.max_concurrent_messages and self.max_concurrent_messages is not 0 and self.sleep_mode and not first_loop:
                 self.concurrent_messages[int(channel.id)] = 0
                 start_spam_at_messages = random.randint(2, 10) # amount of message to wait for before starting spamming
                 messages_counter = 0
@@ -139,6 +140,10 @@ class MyClient(discord.Client):
 
                 await asyncio.sleep(random.randint(0, self.sleep_time))
 
+            elif first_loop:
+                first_loop = False
+                await asyncio.sleep(random.randint(0, self.sleep_time))
+            
             await self.send_message(channel, 'text')
 
             if random.randint(0, 100) < self.emote_chance and self.send_emotes:
@@ -158,6 +163,7 @@ class MyClient(discord.Client):
 
         if '<@' + str(self.user.id) + '>' in message.content:
             channel = message.channel
+            await asyncio.sleep(random.randint(2, 10))
             await self.send_message(channel, 'text', mode='reply')
 
             if random.randint(0, 100) < self.emote_chance and self.send_emotes:
