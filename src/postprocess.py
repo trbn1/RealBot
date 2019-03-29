@@ -106,13 +106,25 @@ def postprocess_messages(name):
                 continue
             if item.startswith(('$', '.', ',', '[', ']', 'pulltop', ' ', 'k !', 't !', '^', '`',
                                 '!', '%', '\"', '\\', '/', '\'', '-', '~', '*', ':+', '+', '|',
-                                ')', ';\"', '? ', '#', '@ ', '(^')):
+                                ')', ';\"', '? ', '#', '@ ', '(^', '{', '}')):
                 continue
             if '@someone' in item:
                 continue
             if re.match(r'^;[A-z]*', item):
                 continue
             if re.match(r'^:[A-z]*', item):
+                continue
+            if re.match(r'^([A-z]\.).*', item):
+                continue
+            if re.match(r'^([A-z]\,).*', item):
+                continue
+            if re.match(r'^([A-z]\").*', item):
+                continue
+            if re.match(r'.*\".*\".*\".*', item):
+                continue
+            if re.match(r'.*\,.*\,.*\,.*', item):
+                continue
+            if re.match(r'.*\..*\..*\..*\..*', item):
                 continue
             proper_messages.append(item)
 
