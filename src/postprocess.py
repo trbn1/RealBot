@@ -3,6 +3,7 @@
 import config as cfg
 import re
 import sys
+from multiprocessing import Pool
 
 
 def postprocess_messages(name):
@@ -110,5 +111,11 @@ def postprocess_messages(name):
 if __name__ == '__main__':
     cfg.generate_bot_config()
     bot_config = cfg.load_config()
+    names = []
     for section in bot_config.sections():
-        postprocess_messages(bot_config.get(section, 'name'))
+        names.append(bot_config.get(section, 'name'))
+
+    pool = Pool()
+    pool.map(postprocess_messages, names)
+    pool.close()
+    pool.join()	
