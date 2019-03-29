@@ -7,14 +7,14 @@ import sys
 DATA_DIR = 'src/data/'
 
 
-def generate_training_config():
+def generate_training_config(name):
     config = configparser.ConfigParser()
 
     config['FilePaths'] = {
-        'source_data': DATA_DIR + 'src.json',
-        'source_messages': DATA_DIR + 'srcmsg.txt',
-        'generated_messages': DATA_DIR + 'genmsg.txt',
-        'messages': DATA_DIR + 'msg.txt',
+        'source_data': DATA_DIR + name + '/src.json',
+        'source_messages': DATA_DIR + name + '/srcmsg.txt',
+        'generated_messages': DATA_DIR + name + '/genmsg.txt',
+        'messages': DATA_DIR + name + '/msg.txt',
     }
 
     config['Extract'] = {
@@ -22,14 +22,14 @@ def generate_training_config():
     }
 
     config['Model'] = {
-        'weights': DATA_DIR + 'textgenrnn_weights.hdf5',
-        'vocab': DATA_DIR + 'textgenrnn_vocab.json',
-        'config': DATA_DIR + 'textgenrnn_config.json',
+        'weights': DATA_DIR + name + '/textgenrnn_weights.hdf5',
+        'vocab': DATA_DIR + name + '/textgenrnn_vocab.json',
+        'config': DATA_DIR + name + '/textgenrnn_config.json',
         'generated_lines': 1000000
     }
 
     try:
-        with open(DATA_DIR + 'config.ini', 'w') as configfile:
+        with open(DATA_DIR + name + '/config.ini', 'w') as configfile:
             config.write(configfile)
     except:
         print('Error: Failed to write configuration file.')
@@ -42,7 +42,7 @@ def generate_bot_config():
     bot_1 = ''
     config[bot_1] = {
         'name': bot_1,
-        'messages': DATA_DIR + bot_1 + '_msg.txt',
+        'messages': DATA_DIR + bot_1 + '/msg.txt',
         'channel': '',
         'emotes': '',
         'token': '',
@@ -60,7 +60,7 @@ def generate_bot_config():
     bot_2 = ''
     config[bot_2] = {
         'name': bot_2,
-        'messages': DATA_DIR + bot_2 + '_msg.txt',
+        'messages': DATA_DIR + bot_2 + '/msg.txt',
         'channel': '',
         'emotes': '',
         'token': '',
@@ -83,9 +83,9 @@ def generate_bot_config():
         sys.exit(1)
 
 
-def load_config():
+def load_config(name=''):
     config = configparser.ConfigParser()
-    config_file = DATA_DIR + 'config.ini'
+    config_file = DATA_DIR + name + 'config.ini'
 
     try:
         config.read(config_file)
