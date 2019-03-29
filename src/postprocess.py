@@ -52,6 +52,8 @@ def postprocess_messages(name):
                 item = re.sub(r'(\*\s)+', '*', item)
             if '@ ' in item:
                 item = re.sub(r'(\@\s)+', '@', item)
+            if '# ' in item:
+                item = re.sub(r'(\#\s)+', '#', item)
             if '_ ' in item:
                 item = re.sub(r'(\_\s)+', '_', item)
             if '( ' in item:
@@ -104,7 +106,7 @@ def postprocess_messages(name):
                 continue
             if item.startswith(('$', '.', ',', '[', ']', 'pulltop', ' ', 'k !', 't !', '^', '`',
                                 '!', '%', '\"', '\\', '/', '\'', '-', '~', '*', ':+', '+', '|',
-                                ')', ';\"', '? ', '# ', '@ ', '(^')):
+                                ')', ';\"', '? ', '#', '@ ', '(^')):
                 continue
             if '@someone' in item:
                 continue
