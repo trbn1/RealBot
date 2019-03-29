@@ -6,8 +6,8 @@ import shutil
 from textgenrnn import textgenrnn
 
 
-def train_network():
-    cfg.generate_training_config()
+def train_network(name):
+    cfg.generate_training_config(name)
     config = cfg.load_config()
 
     textgen = textgenrnn()
@@ -26,4 +26,4 @@ def train_network():
 
 
 if __name__ == '__main__':
-	train_network()
+	train_network('')

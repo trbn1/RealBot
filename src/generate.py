@@ -5,8 +5,8 @@ import config as cfg
 from textgenrnn import textgenrnn
 
 
-def generate_messages():
-    cfg.generate_training_config()
+def generate_messages(name):
+    cfg.generate_training_config(name)
     config = cfg.load_config()
 
     textgen = textgenrnn(config.get('Model', 'weights'),
@@ -21,4 +21,4 @@ def generate_messages():
 				
 				
 if __name__ == '__main__':
-	generate_messages()
+	generate_messages('')

@@ -5,8 +5,8 @@ import json
 import re
 
 
-def extract_messages():
-    cfg.generate_training_config()
+def extract_messages(name):
+    cfg.generate_training_config(name)
     config = cfg.load_config()
 
     with open(config.get('FilePaths', 'source_data'), 'r', encoding='utf8') as jdata:
@@ -25,4 +25,4 @@ def extract_messages():
                 f.write("%s\n" % item)
 
 if __name__ == '__main__':
-	extract_messages()
+	extract_messages('')
