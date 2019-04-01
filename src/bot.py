@@ -212,7 +212,7 @@ if __name__ == '__main__':
     for section in config.sections():
         names.append(config.get(section, 'name'))
 
-    pool = Pool()
+    pool = Pool(len(names))
     pool.map(run, names)
     pool.close()
     pool.join()
