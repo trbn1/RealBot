@@ -118,12 +118,21 @@ def postprocess_messages(name):
         # line starts/ends with
         if item.startswith(('$', '.', ',', '[', ']', 'pulltop', ' ', 'k !', 't !', '^', '`',
                             '!', '%', '\"', '\\', '/', '\'', '-', '~', '*', ':+', '+', '|',
-                            ')', ';\"', '? ', '#', '@ ', '(^', '{', '}', '=')):
+                            ')', ';\"', '? ', '#', '@ ', '(^', '{', '}', '=', 'k!', 't!', '_',
+                            'hugemoji')):
             continue
-        if item.endswith(('*', '#', '@', ',', '`', '=', ':-', ':+')):
+        if item.endswith(('*', '#', '@', ',', '`', '=', ':-', ':+', ';', ':', '_', ' t')):
             continue
 
         # unwanted strings
+        if '⠄' in item:
+            continue
+        if '⣿' in item:
+            continue
+        if '░' in item:
+            continue
+        if '*' in item:
+            continue
         if '@someone' in item:
             continue
         if re.match(r'^;[A-z]*', item):
