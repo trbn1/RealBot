@@ -5,7 +5,7 @@ import config as cfg
 import discord
 import random
 import sys
-from collections import namedtuple
+from multiprocessing import Pool
 
 
 class MyClient(discord.Client):
@@ -14,6 +14,8 @@ class MyClient(discord.Client):
 
         for arg in kwargs:
             self.name = kwargs[arg]
+
+        config = cfg.load_config()
 
         try:
             with open(config.get(self.name, 'messages'), 'r', encoding='utf8') as f:
@@ -185,52 +187,26 @@ class MyClient(discord.Client):
             if random.randint(0, 100) < self.emote_chance and self.send_emotes:
                 await self.send_message(channel, 'emote', mode='reply')
 
+def run(name):
+    config = cfg.load_config()
+    client = MyClient(name=name)
 
-async def login():
-    for i, e in enumerate(entries):
-        try:
-            await e.client.login(tokens[i])
-        except discord.errors.LoginFailure as e:
-            print('Error: %s' % e)
-            sys.exit(1)
-
-async def connect(entry):
     try:
-        await entry.client.connect()
-    except Exception as e:
-        await entry.client.close()
-        print('Error: ', e.__class__.__name__, e)
-        entry.event.set()
+        client.run(config.get(name, 'token'))
+    except discord.errors.LoginFailure as e:
+        print('Client: %s. Error: %s' % name, e)
+        sys.exit(1)
 
-# check if we should close the event loop
-async def check_close():
-    futures = [e.event.wait() for e in entries]
-    await asyncio.wait(futures)
 
-# load config
-cfg.generate_bot_config()
-config = cfg.load_config()
+if __name__ == '__main__':
+    cfg.generate_bot_config()
+    config = cfg.load_config()
 
-# attach clients to event
-Entry = namedtuple('Entry', 'client event')
-entries = []
-tokens = []
-for section_name in config.sections():
-    entries.append(Entry(client=MyClient(name=section_name), event=asyncio.Event()))
-    tokens.append(config.get(section_name, 'token'))
+    names = []
+    for section in config.sections():
+        names.append(config.get(section, 'name'))
 
-# create event loop
-loop = asyncio.get_event_loop()
-
-# login
-loop.run_until_complete(login())
-
-# connect every client
-for e in entries:
-    loop.create_task(connect(e))
-
-# wait for all clients to close
-loop.run_until_complete(check_close())
-
-# close loop
-loop.close()
+    pool = Pool()
+    pool.map(run, names)
+    pool.close()
+    pool.join()
