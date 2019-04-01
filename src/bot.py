@@ -6,6 +6,7 @@ import discord
 import random
 import sys
 from multiprocessing import Pool
+from time import time
 
 
 class MyClient(discord.Client):
@@ -21,13 +22,13 @@ class MyClient(discord.Client):
             with open(config.get(self.name, 'messages'), 'r', encoding='utf8') as f:
                 self.messages = f.readlines()
         except:
-            print('Error: Failed to open %s.' % config.get(self.name, 'messages'))
+            print_error(str(int(time())), self.name, 'Failed to open %s.' % config.get(self.name, 'messages'))
             sys.exit(1)
 
         try:
             self.channels = [int(val) for val in config.get(self.name, 'channel').split(',')]
         except:
-            print('Error: Invalid channel ID passed.')
+            print_error(str(int(time())), self.name, 'Invalid channel ID passed.')
             sys.exit(1)
 
         try:
@@ -38,7 +39,7 @@ class MyClient(discord.Client):
             self.typing_time = float(config.get(self.name, 'typing_time'))
             self.max_concurrent_messages = int(config.get(self.name, 'max_concurrent_messages'))
         except ValueError as e:
-            print('Error: Invalid values in [Settings] section of configuration file. %s' % e)
+            print_error(str(int(time())), self.name, 'Invalid values in [Settings] section of configuration file.')
             sys.exit(1)
 
         try:
@@ -46,7 +47,7 @@ class MyClient(discord.Client):
             if 'online' not in self.status and 'dnd' not in self.status:
                 raise Exception('Status must be \'online\' or \'dnd\'.')
         except Exception as e:
-            print('Error: Invalid status passed. %s' % e)
+            print_error(str(int(time())), self.name, 'Invalid status passed. %s' % e)
             sys.exit(1)
 
         try:
@@ -60,7 +61,7 @@ class MyClient(discord.Client):
             else:
                 self.sleep_mode = False
         except Exception as e:
-            print('Error: Invalid sleep mode passed. %s' % e)
+            print_error(str(int(time())), self.name, 'Invalid sleep mode passed. %s' % e)
             sys.exit(1)
 
         self.emotes = config.get(self.name, 'emotes').split(',')
@@ -86,7 +87,7 @@ class MyClient(discord.Client):
             for section in config.sections():
                 self.names.append(config.get(section, 'name'))
         except Exception as e:
-            print('Error: invalid name passed. %s' % e)
+            print_error(str(int(time())), self.name, 'Invalid name passed. %s' % e)
             sys.exit(1)
 
         for channel_id in self.channels:
@@ -110,13 +111,13 @@ class MyClient(discord.Client):
                 try:
                     await channel.send(msg)
                 except:
-                    print('Error while sending a message')
+                    print_error(str(int(time())), self.name, 'Error while sending a message')
 
             if message_type is 'emote':
                 try:
                     await channel.send(random.choice(self.emotes))
                 except:
-                    print('Error while sending a message')
+                    print_error(str(int(time())), self.name, 'Error while sending a message')
 
         if self.quit and message_type is 'text':
             for sentence in self.quit_phrases:
@@ -187,6 +188,11 @@ class MyClient(discord.Client):
             if random.randint(0, 100) < self.emote_chance and self.send_emotes:
                 await self.send_message(channel, 'emote', mode='reply')
 
+
+def print_error(time, client, msg):
+    print(time + ' in ' + client + ' error:' + msg)
+
+
 def run(name):
     config = cfg.load_config()
     client = MyClient(name=name)
@@ -194,7 +200,7 @@ def run(name):
     try:
         client.run(config.get(name, 'token'))
     except discord.errors.LoginFailure as e:
-        print('Client: %s. Error: %s' % name, e)
+        print_error(str(int(time())), name, '%s.' % e)
         sys.exit(1)
 
 
